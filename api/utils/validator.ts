@@ -2,10 +2,11 @@ import validator from "validator";
 import { Request } from "express";
 
 export const validateSignUpData = (req: Request) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, emailId, password } = req.body;
+  
   if (!firstName || !lastName) {
     throw new Error("Name is not valid!");
-  } else if (!validator.isEmail(email)) {
+  } else if (!validator.isEmail(emailId)) {
     throw new Error("Email is not valid!");
   } else if (!validator.isStrongPassword(password)) {
     // throw new Error("Please enter a strong Password!");
@@ -29,3 +30,12 @@ export const validateEditProfileData = (req: Request) => {
   return isEditAllowed;
 };
 
+export const validateLogInData = (req: Request) => {
+  const { emailId, password } = req.body;
+
+  if (!password) {
+    throw new Error("Password is not valid!");
+  } else if (!validator.isEmail(emailId)) {
+    throw new Error("Email is not valid!");
+  } 
+};

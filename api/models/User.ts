@@ -78,7 +78,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.methods.getJWT = function () {
   const jwtToken = jwt.sign(
-    { id: this._id, firstName: this.firstName, lastName: this.lastName, email: this.email },
+    { id: this._id, firstName: this.firstName, lastName: this.lastName, emailId: this.emailId },
     "abcdefghijklmnopqrstuvwxyz"
   );
   return jwtToken;
@@ -88,4 +88,5 @@ userSchema.methods.comparePassword = async function (password: string) {
   return await bcrypt.compare(password, this.password);
 };
 
-export const UserModel = mongoose.model("User", userSchema);
+const UserModel = mongoose.model("User", userSchema);
+export default UserModel;

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { UserModel as User } from '../models/User';
+import User from "../models/User";
 import { Request, Response, NextFunction } from 'express';
 
 export interface authReq extends Request {
@@ -14,14 +14,13 @@ export const userAuth = async (req: authReq, res: Response, next: NextFunction) 
 
     const decodedObj: any = await jwt.verify(token, "abcdefghijklmnopqrstuvwxyz");
 
-    const user = await User.findById(decodedObj._id);
+    const user = await User.findById(decodedObj.id);
     if (!user) {
       throw new Error("User not found");
     }
 
-    req.user = user 
+    req.user = user;
     next();
-    return;
   } catch (err) {
     res.status(400).send("ERROR: " + err);
   }
