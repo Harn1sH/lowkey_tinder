@@ -2,10 +2,10 @@ import jwt from 'jsonwebtoken';
 import User from "../models/User";
 import { Request, Response, NextFunction } from 'express';
 
-export interface authReq extends Request {
+export interface AuthReq extends Request {
   user?: any;  
 }
-export const userAuth = async (req: authReq, res: Response, next: NextFunction) => {
+export const userAuth = async (req: AuthReq, res: Response, next: NextFunction) => {
   try {
     const { token } = req.cookies;
     if (!token) {
