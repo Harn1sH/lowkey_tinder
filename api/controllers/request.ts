@@ -34,21 +34,28 @@ export const makeRequest = async (req: AuthReq, res: Response) => {
 };
 
 export const reviewRequest = async (req: AuthReq, res: Response) => {
-  const currentUser = req.user;
-  let status = req.params.status;
-  const requestID = req.params.requestID;
+  try {
+    const currentUser = req.user;
+    let status = req.params.status;
+    const requestID = req.params.requestID;
 
-  const allowedStatus = ["accepted", "rejected"];
-  if (!allowedStatus.includes(status)) {
-    res.status(400).json({ message: "Invalid Status" });
+    const allowedStatus = ["accepted", "rejected"];
+    if (!allowedStatus.includes(status)) {
+      res.status(400).json({ message: "Invalid Status" });
+    }
+
+    const request = await connection.findOne({ _id: requestID, toUserId: currentUser._id });
+    if (!request) {
+      res.status(400).json({ message: "Invalid request" });
+    }
+
+    request.status = <"accepted" | "rejected" | "pending" | "interested">status;
+
+    await request.save();
+    res.json({ data: request });
+  } catch (error) {
+    res.status(400).json({ error: (<Error>error).message });
   }
-
-  const request = await connection.findOne({ _id: requestID, toUserId: currentUser._id });
-  if (!request) {
-    res.status(400).json({ message: "Invalid request" });
-  }
-
-  request.status = <"accepted" | "rejected" | "pending" | "interested">status;
-  await request?.save();
-  res.json({ data: request });
 };
+
+export const getRequests = async (req: AuthReq, res: Response) => { }
