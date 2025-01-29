@@ -58,4 +58,34 @@ export const reviewRequest = async (req: AuthReq, res: Response) => {
   }
 };
 
-export const getRequests = async (req: AuthReq, res: Response) => { }
+export const getRequests = async (req: AuthReq, res: Response) => {
+  try {
+    const currentUser = req.user;
+
+    const newRequests = await connection
+      .find({ toUserId: currentUser.id, status: "interested" })
+      .populate("fromUserId", ["firstName", "lastName", "photoUrl", "age", "gender", "about"]);
+
+    res.json({ data: newRequests });
+  } catch (error) {
+    res.status(400).json({ error: (<Error>error).message });
+  }
+};
+
+export const getAllRequests = async (req: AuthReq, res: Response) => {
+  try {
+    const currentUser = req.user;
+    const requests = await connection
+      .find({
+        $or: [
+          { fromUserId: currentUser.id, status: "accepted" },
+          { toUserId: currentUser.id, status: "accepted" },
+        ],
+      })
+      .populate("fromUserId", ["firstName", "lastName", "photoUrl", "age", "gender", "about"]);
+
+    res.json({ data: requests });
+  } catch (error) {
+    res.status(400).json({ error: (<Error>error).message });
+  }
+};
